@@ -1,21 +1,45 @@
-// create slugs: as the logic to create slugs from file names
-// can get tricky, the plugin has a function to create slugs
-// https://www.gatsbyjs.org/packages/gatsby-source-filesystem/
-const { createFilePath } = require(`gatsby-source-filesystem`)
-exports.onCreateNode = ({ node, getNode }) => {
-  if (node.internal.type === `MarkdownRemark`) {
-    // console.log("createFilePath", createFilePath({ node, getNode, basePath: `pages` }))
-    const slug = createFilePath({ node, getNode, basePath: `pages` })
-    // console.log(node.internal.type)
-    // createNodeField lets us create additional fields on nodes created by
-    // other plugins. Only ori. creator of a node can directly modify the
-    // node–all other plugins (incl. this file) must use this function to
-    // create additional fields
-    // tl;dr: Creates new query'able field with name of 'slug'
-    createNodeField({
-      node,
-      name: `slug`,
-      value: slug
-    })
-  }
+// node module sys: ea. file = separate module
+// https://nodejs.org/api/modules.html#modules_modules
+const path = require('path')
+
+// is an object. it exposes whatever you assigned to it as a module.
+// because it's an obj, can attach properties / methods to it
+// https://www.tutorialsteacher.com/nodejs/nodejs-module-exports
+// about createPages from Data Programmatically:
+// https://www.gatsbyjs.org/docs/programmatically-create-pages-from-data/
+// Tell plugins to add pages: https://www.gatsbyjs.org/docs/node-apis/#createPages
+exports.createPages = ({ actions, graphql }) => {
+  const { createPage } = actions
+
+  return new Promise((resolve, reject) => {
+    const blogPostTemplatePath = path.resolve(`src/templates/blogPost.js`)
+
+    resolve(graphql`
+      query Pages {
+        allMarkdownRemark {
+          edges {
+            node {
+              frontmatter {
+                path
+              }
+            }
+          }
+        }
+      }
+      `
+    ).then(result => {
+        result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+          const path = node.frontmatter.path
+          createPage({
+            path,
+            component: blogPostTemplatePath,
+            context: {
+              pathSlug: path
+            }
+          })
+          resolve()
+        })
+      }
+    )
+  })
 }
