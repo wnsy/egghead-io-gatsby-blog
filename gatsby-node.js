@@ -8,26 +8,28 @@ const path = require('path')
 // about createPages from Data Programmatically:
 // https://www.gatsbyjs.org/docs/programmatically-create-pages-from-data/
 // Tell plugins to add pages: https://www.gatsbyjs.org/docs/node-apis/#createPages
-exports.createPages = ({ actions, graphql }) => {
+exports.createPages = (({ actions, graphql }) => {
   const { createPage } = actions
 
   return new Promise((resolve, reject) => {
     const blogPostTemplatePath = path.resolve(`src/templates/blogPost.js`)
-
-    resolve(graphql`
-      query Pages {
-        allMarkdownRemark {
-          edges {
-            node {
-              frontmatter {
-                path
+    const pageQuery = graphql(
+      `
+        query Pages {
+          allMarkdownRemark {
+            edges {
+              node {
+                frontmatter {
+                  path
+                }
               }
             }
           }
         }
-      }
       `
-    ).then(result => {
+    )
+    resolve(pageQuery
+      .then(result => {
         result.data.allMarkdownRemark.edges.forEach(({ node }) => {
           const path = node.frontmatter.path
           createPage({
@@ -39,7 +41,7 @@ exports.createPages = ({ actions, graphql }) => {
           })
           resolve()
         })
-      }
+      })
     )
   })
-}
+})

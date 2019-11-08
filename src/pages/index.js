@@ -1,6 +1,6 @@
 import React from 'react'
 import Query from '../components/Query'
-import { graphql } from 'gatsby'
+import { graphql, Link } from 'gatsby'
 
 const Layout = ({ data }) => {
   const { edges } = data.allMarkdownRemark
@@ -25,7 +25,9 @@ const Layout = ({ data }) => {
                 marginBottom: '1rem',
               }}
             >
-              <br />{frontmatter.title}
+              <Link to={frontmatter.path}>
+                <br />{frontmatter.title}
+              </Link>
               <br />{frontmatter.date}
               {/* <br />{excerpt} */}
               <br />word count: {wordCount.words}
