@@ -14,6 +14,9 @@ const Layout = ({ data }) => {
         fontFamily: 'avenir',
        }}
       >
+      <Link to='/tags'>
+        <br />Find posts by tags
+      </Link>
       {edges.map(
         edge => {
           const { frontmatter } = edge.node
