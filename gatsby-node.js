@@ -2,6 +2,8 @@
 // https://nodejs.org/api/modules.html#modules_modules
 const path = require('path')
 
+const template = path.resolve()
+
 const createTagPages = ( createPage, posts ) => {
   const allTagsIndexTemplate = path.resolve(`src/templates/allTagsIndex.js`)
   const allSingleTagsTemplate = path.resolve(`src/templates/singleTagsIndex.js`)
